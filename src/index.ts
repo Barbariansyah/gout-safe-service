@@ -1,6 +1,8 @@
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import { FoodRiskResponse } from "./types/foodRisk";
 import { mockFoodData } from "./data/mockFoodData";
+import foodRiskRoutes from "./routes/foodRisk";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,8 +40,11 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
 });
 
-// Find risk endpoint
-app.get("/find-risk", (req: Request, res: Response) => {
+// Mount food risk routes (includes /find-risk with OpenAI integration)
+app.use("/", foodRiskRoutes);
+
+// Mock endpoint for testing without OpenAI (kept as fallback)
+app.get("/find-risk-mock", (req: Request, res: Response) => {
   const query = req.query.query as string;
 
   if (!query) {
